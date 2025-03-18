@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Selection</title>
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #1e1e1e;
+            color: #00ffcc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        form {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px #00ffcc;
+            width: 90%;
+            max-width: 500px;
+        }
+        label, input, select {
+            display: block;
+            margin-bottom: 15px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            background-color: #1e1e1e;
+            border: 2px solid #00ffcc;
+            border-radius: 8px;
+            color: #00ffcc;
+            outline: none;
+        }
+        input[type="text"]::placeholder {
+            color: #888;
+        }
+        button {
+            background-color: #00ffcc;
+            color: #1e1e1e;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #00cc99;
+        }
+        a {
+            color: #00ffcc;
+            text-decoration: none;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                width: 95%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Team Selection</h1>
+    
+    <form action="/team-selection" method="post">
+        <label for="team_id">Team ID (required):</label>
+        <input type="text" id="team_id" name="team_id" placeholder="Enter Team ID" required>
+
+        <label for="team_name">Team Name:</label>
+        <input type="text" id="team_name" name="team_name" placeholder="Enter Team Name" required>
+
+        <label for="name_suggestions">Or select from suggested names:</label>
+        <select id="name_suggestions" onchange="document.getElementById('team_name').value = this.value">
+            <option value="">-- Select a name --</option>
+            {% for name in default_teams %}
+                <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Join Game</button>
+    </form>
+
+</body>
+
+</html>

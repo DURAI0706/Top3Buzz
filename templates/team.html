@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Buzzer</title>
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #000;
+            color: #ffcc00;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            text-align: center;
+        }
+        #buzzer {
+            background-color: #ff0000;
+            color: white;
+            padding: 50px;
+            font-size: 24px;
+            border: none;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 0 30px #ffcc00;
+        }
+        #buzzer:hover {
+            background-color: #990000;
+        }
+        #buzzer:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        #buzzed-list {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #buzzed-list h3 {
+            margin-bottom: 10px;
+        }
+        #buzzed-list ol {
+            padding-left: 0;
+            list-style: none;
+        }
+        #timer {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Team Buzzer</h1>
+    <div id="timer">00:00</div>
+    <button id="buzzer" disabled>BUZZ</button>
+    <div id="status" style="display: none;"></div>
+
+    <script>
+        const buzzerButton = document.getElementById('buzzer');
+        const timerDisplay = document.getElementById('timer');
+        const statusDiv = document.getElementById('status');
+
+        let timerRunning = false;
+        let secondsRemaining = 0;
+
+        // Fetch timer status from server every second
+        setInterval(fetchTimerStatus, 1000);
+
+        buzzerButton.addEventListener('click', function() {
+            fetch('/buzz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Success') {
+                    statusDiv.textContent = `Buzzed in! You are position #${data.position}`;
+                    statusDiv.style.display = 'block';
+                    buzzerButton.disabled = true;
+                } else {
+                    statusDiv.textContent = data.message;
+                    statusDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.textContent = 'Error connecting to server';
+                statusDiv.style.display = 'block';
+            });
+        });
+
+        function fetchTimerStatus() {
+            fetch('/timer-status')
+            .then(response => response.json())
+            .then(data => {
+                secondsRemaining = data.remaining_time;
+                timerRunning = data.timer_active;
+                
+                if (timerRunning) {
+                    buzzerButton.disabled = false;
+                    updateTimerDisplay();
+                } else {
+                    buzzerButton.disabled = true;
+                    timerDisplay.textContent = '00:00';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                buzzerButton.disabled = true;
+            });
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(secondsRemaining / 60);
+            const seconds = secondsRemaining % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
+
+</html>

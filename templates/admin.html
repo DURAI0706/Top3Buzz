@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buzzer Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.danger {
+            background-color: #f44336;
+        }
+        button.danger:hover {
+            background-color: #d32f2f;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        #buzzer-status {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .active {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .inactive {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .control-panel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .panel-section {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        #timer-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buzzer Admin Panel</h1>
+
+    <div class="control-panel">
+        <div class="panel-section">
+            <h2>Buzzer Control</h2>
+            <div id="buzzer-status" class="inactive">
+                Buzzer Status: <span id="status-text">Inactive</span>
+            </div>
+            <button id="reset-buzzer">Reset Buzzer</button>
+            <button id="toggle-buzzer">Toggle Buzzer</button>
+        </div>
+
+        <div class="panel-section">
+            <h2>Timer</h2>
+            <div id="timer-display">00:00</div>
+            <div class="timer-controls">
+                <button id="start-timer">Start</button>
+                <button id="pause-timer">Pause</button>
+                <button id="reset-timer">Reset</button>
+            </div>
+            <div>
+                <label for="timer-preset">Preset:</label>
+                <select id="timer-preset">
+                    <option value="30">30 seconds</option>
+                    <option value="60">1 minute</option>
+                    <option value="180">3 minutes</option>
+                    <option value="300">5 minutes</option>
+                </select>
+                <button id="set-timer">Set Timer</button>
+            </div>
+        </div>
+    </div>
+
+    <h2>Teams that have buzzed in</h2>
+    <table id="buzzed-teams-table">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Team Name</th>
+                <th>Buzz Time</th>
+            </tr>
+        </thead>
+        <tbody id="buzzed-teams">
+        </tbody>
+    </table>
+
+    <h2>All Teams</h2>
+    <table id="all-teams-table">
+        <thead>
+            <tr>
+                <th>Team ID</th>
+                <th>Team Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="all-teams">
+        </tbody>
+    </table>
+
+    <p><a href="/">Return to Home</a></p>
+
+    <script>
+        const toggleBuzzerBtn = document.getElementById('toggle-buzzer');
+        const buzzerStatusDiv = document.getElementById('buzzer-status');
+        const statusTextSpan = document.getElementById('status-text');
+        const timerPreset = document.getElementById('timer-preset');
+        const setTimerBtn = document.getElementById('set-timer');
+        const timerDisplay = document.getElementById('timer-display');
+        const resetBuzzerBtn = document.getElementById('reset-buzzer');
+        const startTimerBtn = document.getElementById('start-timer');
+        const pauseTimerBtn = document.getElementById('pause-timer');
+        const resetTimerBtn = document.getElementById('reset-timer');
+    
+        let secondsRemaining = 0;
+        let timerRunning = false;
+        let timerInterval;
+    
+        const updateTimerDisplay = () => {
+            const minutes = Math.floor(secondsRemaining / 60);
+            const seconds = secondsRemaining % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        };
+    
+        const updateBuzzerStatus = (active) => {
+            if (active) {
+                buzzerStatusDiv.className = 'active';
+                statusTextSpan.textContent = 'Active';
+                toggleBuzzerBtn.textContent = 'Disable Buzzer';
+            } else {
+                buzzerStatusDiv.className = 'inactive';
+                statusTextSpan.textContent = 'Inactive';
+                toggleBuzzerBtn.textContent = 'Enable Buzzer';
+            }
+        };
+    
+        const setTimer = () => {
+            const seconds = parseInt(timerPreset.value);
+            fetch('/set-timer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ seconds: seconds })
+            })
+            .then(response => response.json())
+            .then(data => {
+                secondsRemaining = data.remaining_time;
+                timerRunning = data.timer_active;
+                updateTimerDisplay();
+                updateBuzzerStatus(true);
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    startTimerInterval();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+        
+        const startTimerInterval = () => {
+            timerInterval = setInterval(() => {
+                fetch('/update-timer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'tick' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    secondsRemaining = data.remaining_time;
+                    timerRunning = data.timer_active;
+                    updateTimerDisplay();
+                    updateBuzzerStatus(data.buzzer_active);
+                    
+                    if (!timerRunning) {
+                        clearInterval(timerInterval);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }, 1000);
+        };
+    
+        const startTimer = () => {
+            fetch('/update-timer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'start' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                timerRunning = data.timer_active;
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    startTimerInterval();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    
+        const pauseTimer = () => {
+            fetch('/update-timer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'pause' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                timerRunning = data.timer_active;
+                if (!timerRunning) {
+                    clearInterval(timerInterval);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    
+        const resetTimer = () => {
+            fetch('/update-timer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'reset' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                secondsRemaining = data.remaining_time;
+                timerRunning = data.timer_active;
+                updateTimerDisplay();
+                updateBuzzerStatus(data.buzzer_active);
+                clearInterval(timerInterval);
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    
+        const resetBuzzer = () => {
+            fetch('/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateBuzzerStatus(false);
+                fetchStatus(); // Refresh displayed teams
+            })
+            .catch(error => console.error('Error:', error));
+        };
+        
+        const toggleBuzzer = () => {
+            fetch('/toggle-buzzer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateBuzzerStatus(data.buzzer_active);
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    
+        const fetchStatus = async () => {
+            const response = await fetch('/status');
+            const data = await response.json();
+
+            // Update buzzer status
+            updateBuzzerStatus(data.buzzer_active);
+            
+            // Update timer display
+            secondsRemaining = data.remaining_time;
+            timerRunning = data.timer_active;
+            updateTimerDisplay();
+
+            // Update buzzed teams table
+            const buzzedTeamsTable = document.getElementById('buzzed-teams');
+            buzzedTeamsTable.innerHTML = ''; // Clear previous data
+            data.buzzed_teams.forEach((team, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${team}</td>
+                    <td>${new Date().toLocaleTimeString()}</td>
+                `;
+                buzzedTeamsTable.appendChild(row);
+            });
+
+            // Update all teams table
+            const allTeamsTable = document.getElementById('all-teams');
+            allTeamsTable.innerHTML = ''; // Clear previous data
+            
+            Object.entries(data.team_names).forEach(([teamId, teamName]) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${teamId}</td>
+                    <td>${teamName}</td>
+                    <td>${data.buzzed_teams.includes(teamName) ? 'Buzzed' : 'Not Buzzed'}</td>
+                `;
+                allTeamsTable.appendChild(row);
+            });
+        };
+
+        // Attach event listeners
+        toggleBuzzerBtn.addEventListener('click', toggleBuzzer);
+        resetBuzzerBtn.addEventListener('click', resetBuzzer);
+        setTimerBtn.addEventListener('click', setTimer);
+        startTimerBtn.addEventListener('click', startTimer);
+        pauseTimerBtn.addEventListener('click', pauseTimer);
+        resetTimerBtn.addEventListener('click', resetTimer);
+
+        // Fetch status every 2 seconds to update live data
+        setInterval(fetchStatus, 2000);
+        fetchStatus(); // Initial fetch
+    </script>
+</body>
+</html>
