@@ -80,17 +80,26 @@
     <div id="timer">00:00</div>
     <button id="buzzer" disabled>BUZZ</button>
     <div id="status" style="display: none;"></div>
+    <div id="removal-message" class="removed-message" style="display: none;">
+        <h2>Team Removed</h2>
+        <p>Your team has been removed from the game by the administrator.</p>
+        <p><a href="/">Return to Home</a></p>
+    </div>
 
     <script>
         const buzzerButton = document.getElementById('buzzer');
         const timerDisplay = document.getElementById('timer');
         const statusDiv = document.getElementById('status');
+        const removalMessageDiv = document.getElementById('removal-message');
 
         let timerRunning = false;
         let secondsRemaining = 0;
 
         // Fetch timer status from server every second
-        setInterval(fetchTimerStatus, 1000);
+        const timerInterval = setInterval(fetchTimerStatus, 1000);
+        
+        // Check if team has been removed every 3 seconds
+        const teamStatusInterval = setInterval(checkTeamStatus, 3000);
 
         buzzerButton.addEventListener('click', function() {
             fetch('/buzz', {
@@ -106,6 +115,11 @@
                 } else {
                     statusDiv.textContent = data.message;
                     statusDiv.style.display = 'block';
+                    
+                    // Check if team was removed
+                    if (data.message === "Your team has been removed from the game") {
+                        showRemovalMessage();
+                    }
                 }
             })
             .catch(error => {
@@ -136,13 +150,54 @@
             });
         }
 
+        function checkTeamStatus() {
+            fetch('/team-status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.removed) {
+                    showRemovalMessage();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking team status:', error);
+            });
+        }
+
+        function showRemovalMessage() {
+            // Show removal message
+            removalMessageDiv.style.display = 'block';
+            
+            // Hide buzzer and timer
+            buzzerButton.style.display = 'none';
+            timerDisplay.style.display = 'none';
+            statusDiv.style.display = 'none';
+            
+            // Clear intervals
+            clearInterval(timerInterval);
+            clearInterval(teamStatusInterval);
+        }
+
         function updateTimerDisplay() {
             const minutes = Math.floor(secondsRemaining / 60);
             const seconds = secondsRemaining % 60;
             timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
     </script>
-</body>
-</html>
 
+    <style>
+        .removed-message {
+            background-color: #ffeeee;
+            border: 2px solid #ff0000;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .removed-message h2 {
+            color: #ff0000;
+            margin-top: 0;
+        }
+    </style>
+</body>
 </html>

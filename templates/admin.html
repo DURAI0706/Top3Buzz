@@ -151,6 +151,7 @@
                 <th>Team ID</th>
                 <th>Team Name</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody id="all-teams">
@@ -170,17 +171,17 @@
         const startTimerBtn = document.getElementById('start-timer');
         const pauseTimerBtn = document.getElementById('pause-timer');
         const resetTimerBtn = document.getElementById('reset-timer');
-    
+
         let secondsRemaining = 0;
         let timerRunning = false;
         let timerInterval;
-    
+
         const updateTimerDisplay = () => {
             const minutes = Math.floor(secondsRemaining / 60);
             const seconds = secondsRemaining % 60;
             timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         };
-    
+
         const updateBuzzerStatus = (active) => {
             if (active) {
                 buzzerStatusDiv.className = 'active';
@@ -192,7 +193,7 @@
                 toggleBuzzerBtn.textContent = 'Enable Buzzer';
             }
         };
-    
+
         const setTimer = () => {
             const seconds = parseInt(timerPreset.value);
             fetch('/set-timer', {
@@ -213,7 +214,7 @@
             })
             .catch(error => console.error('Error:', error));
         };
-        
+
         const startTimerInterval = () => {
             timerInterval = setInterval(() => {
                 fetch('/update-timer', {
@@ -235,7 +236,7 @@
                 .catch(error => console.error('Error:', error));
             }, 1000);
         };
-    
+
         const startTimer = () => {
             fetch('/update-timer', {
                 method: 'POST',
@@ -252,7 +253,7 @@
             })
             .catch(error => console.error('Error:', error));
         };
-    
+
         const pauseTimer = () => {
             fetch('/update-timer', {
                 method: 'POST',
@@ -268,7 +269,7 @@
             })
             .catch(error => console.error('Error:', error));
         };
-    
+
         const resetTimer = () => {
             fetch('/update-timer', {
                 method: 'POST',
@@ -285,7 +286,7 @@
             })
             .catch(error => console.error('Error:', error));
         };
-    
+
         const resetBuzzer = () => {
             fetch('/reset', {
                 method: 'POST',
@@ -298,7 +299,7 @@
             })
             .catch(error => console.error('Error:', error));
         };
-        
+
         const toggleBuzzer = () => {
             fetch('/toggle-buzzer', {
                 method: 'POST',
@@ -310,45 +311,93 @@
             })
             .catch(error => console.error('Error:', error));
         };
-    
+
+        const removeTeam = (teamId) => {
+            if (confirm('Are you sure you want to remove this team?')) {
+                fetch('/remove-team', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ team_id: teamId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'Success') {
+                        // Show notification
+                        alert(data.message);
+                        
+                        // Force an immediate refresh of the teams lists
+                        fetchStatus();
+                        
+                        // Remove any immediate references to this team from the DOM
+                        // Remove from "All Teams" table
+                        const allTeamsRows = document.querySelectorAll('#all-teams tr');
+                        allTeamsRows.forEach(row => {
+                            if (row.cells[0].textContent === teamId) {
+                                row.remove();
+                            }
+                        });
+                        
+                        // If the team was buzzed in, check for it in the buzzed teams table as well
+                        const teamName = data.team_name || ''; // Get team name from response if available
+                        if (teamName) {
+                            const buzzedTeamsRows = document.querySelectorAll('#buzzed-teams tr');
+                            buzzedTeamsRows.forEach(row => {
+                                if (row.cells[1].textContent === teamName) {
+                                    row.remove();
+                                }
+                            });
+                        }
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        };
+
         const fetchStatus = async () => {
-            const response = await fetch('/status');
-            const data = await response.json();
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
 
-            // Update buzzer status
-            updateBuzzerStatus(data.buzzer_active);
-            
-            // Update timer display
-            secondsRemaining = data.remaining_time;
-            timerRunning = data.timer_active;
-            updateTimerDisplay();
+                // Update buzzer status
+                updateBuzzerStatus(data.buzzer_active);
+                
+                // Update timer display
+                secondsRemaining = data.remaining_time;
+                timerRunning = data.timer_active;
+                updateTimerDisplay();
 
-            // Update buzzed teams table
-            const buzzedTeamsTable = document.getElementById('buzzed-teams');
-            buzzedTeamsTable.innerHTML = ''; // Clear previous data
-            data.buzzed_teams.forEach((team, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${team}</td>
-                    <td>${new Date().toLocaleTimeString()}</td>
-                `;
-                buzzedTeamsTable.appendChild(row);
-            });
+                // Update buzzed teams table
+                const buzzedTeamsTable = document.getElementById('buzzed-teams');
+                buzzedTeamsTable.innerHTML = ''; // Clear previous data
+                data.buzzed_teams.forEach((team, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${team}</td>
+                        <td>${new Date().toLocaleTimeString()}</td>
+                    `;
+                    buzzedTeamsTable.appendChild(row);
+                });
 
-            // Update all teams table
-            const allTeamsTable = document.getElementById('all-teams');
-            allTeamsTable.innerHTML = ''; // Clear previous data
-            
-            Object.entries(data.team_names).forEach(([teamId, teamName]) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${teamId}</td>
-                    <td>${teamName}</td>
-                    <td>${data.buzzed_teams.includes(teamName) ? 'Buzzed' : 'Not Buzzed'}</td>
-                `;
-                allTeamsTable.appendChild(row);
-            });
+                // Update all teams table
+                const allTeamsTable = document.getElementById('all-teams');
+                allTeamsTable.innerHTML = ''; // Clear previous data
+                
+                Object.entries(data.team_names).forEach(([teamId, teamName]) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${teamId}</td>
+                        <td>${teamName}</td>
+                        <td>${data.buzzed_teams.includes(teamName) ? 'Buzzed' : 'Not Buzzed'}</td>
+                        <td><button onclick="removeTeam('${teamId}')">Remove Team</button></td>
+                    `;
+                    allTeamsTable.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching status:', error);
+            }
         };
 
         // Attach event listeners
