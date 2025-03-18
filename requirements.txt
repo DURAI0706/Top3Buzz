@@ -2,3 +2,4 @@ Flask
 Flask-Session
 Flask-WTF
 WTForms
+gunicorn
