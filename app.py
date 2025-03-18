@@ -9,6 +9,7 @@ timer_active = False
 remaining_time = 0
 buzzed_teams = []
 team_names = {}  # Dictionary to store team ID to name mappings
+removed_teams = set()  # Set to store IDs of teams that have been removed
 
 # Default team names from popular story game characters
 default_teams = [
@@ -30,6 +31,10 @@ def team_selection():
         team_name = request.form.get('team_name')
         
         if team_id and team_name:
+            # Check if team was previously removed
+            if team_id in removed_teams:
+                removed_teams.remove(team_id)  # Allow them to rejoin
+                
             team_names[team_id] = team_name
             session['team_id'] = team_id  # Store team ID in session
             return redirect(url_for('team_page'))
@@ -42,6 +47,10 @@ def team_page():
     
     if not team_id:
         return redirect(url_for('team_selection'))
+    
+    # Check if team has been removed
+    if team_id in removed_teams:
+        return render_template('team_removed.html')
     
     team_name = team_names.get(team_id, "Unknown Team")
     return render_template('team.html', team_name=team_name)
@@ -119,6 +128,17 @@ def status():
         "team_names": team_names
     })
 
+@app.route('/team-status', methods=['GET'])
+def team_status():
+    team_id = session.get('team_id')
+    
+    if not team_id:
+        return jsonify({"status": "Error", "message": "No team identified"}), 401
+    
+    return jsonify({
+        "removed": team_id in removed_teams
+    })
+
 @app.route('/timer-status', methods=['GET'])
 def timer_status():
     return jsonify({
@@ -132,6 +152,9 @@ def buzz():
     
     if not team_id:
         return jsonify({"status": "Error", "message": "No team identified"}), 401
+    
+    if team_id in removed_teams:
+        return jsonify({"status": "Error", "message": "Your team has been removed from the game"}), 403
     
     team_name = team_names.get(team_id, "Unknown Team")
     
@@ -160,6 +183,34 @@ def update_team_name():
     
     team_names[team_id] = new_name
     return jsonify({"status": "Success", "message": "Team name updated successfully"})
+
+@app.route('/remove-team', methods=['POST'])
+def remove_team():
+    team_id = request.json.get('team_id')
+    
+    if not team_id:
+        return jsonify({"status": "Error", "message": "Team ID required"}), 400
+    
+    if team_id in team_names:
+        team_name = team_names[team_id]
+        
+        # Remove from buzzed teams if present
+        if team_name in buzzed_teams:
+            buzzed_teams.remove(team_name)
+        
+        # Add to removed teams set
+        removed_teams.add(team_id)
+        
+        # Remove from team_names dictionary
+        del team_names[team_id]
+        
+        return jsonify({
+            "status": "Success", 
+            "message": f"Team {team_name} (ID: {team_id}) has been removed",
+            "team_name": team_name
+        })
+    else:
+        return jsonify({"status": "Error", "message": "Team ID not found"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
