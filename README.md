@@ -33,14 +33,6 @@
 
 ---
 
-## 📸 Demo
-
-> Add screenshots or screen recordings here  
-> Example:  
-> ![Top3Buzz Demo](assets/demo.gif)
-
----
-
 ## 🔮 Coming Soon
 
 - 📊 Scoreboard integration  
@@ -52,7 +44,3 @@
 ## 🛠️ Installation
 
 ```bash
-git clone https://github.com/yourusername/top3buzz.git
-cd top3buzz
-pip install -r requirements.txt
-python app.py
