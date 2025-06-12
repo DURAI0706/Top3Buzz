@@ -40,7 +40,3 @@
 - 📈 Admin analytics and buzz history  
 
 ---
-
-## 🛠️ Installation
-
-```bash
