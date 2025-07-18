@@ -3,102 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Selection</title>
+    <title>🎮 Team Selection - Top3Buzz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: #1e1e1e;
-            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            padding: 20px;
             min-height: 100vh;
-            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
         }
-        h1 {
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            margin-bottom: 20px;
+
+        .selection-container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            max-width: 600px;
+            width: 100%;
             text-align: center;
         }
-        form {
-            background-color: #2a2a2a;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 15px #00ffcc;
-            width: 90%;
-            max-width: 500px;
+
+        .title {
+            font-size: 3rem;
+            color: #00ff88;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
-        label, input, select {
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
             display: block;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #00ff88;
+            font-size: 1.1rem;
         }
-        input[type="text"], select {
+
+        input, select {
             width: 100%;
-            padding: 10px;
-            background-color: #1e1e1e;
-            border: 2px solid #00ffcc;
+            padding: 12px;
+            border: 2px solid #00ff88;
             border-radius: 8px;
-            color: #00ffcc;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
             outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
-        input[type="text"]::placeholder {
-            color: #888;
-        }
-        button {
-            background-color: #00ffcc;
-            color: #1e1e1e;
-            padding: 12px 20px;
+
+
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
             border: none;
             border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
             cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 20px;
         }
-        button:hover {
-            background-color: #00cc99;
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
         }
-        a {
-            color: #00ffcc;
+
+        .submit-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .admin-link {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .admin-link a {
+            color: #00ff88;
             text-decoration: none;
-            margin-top: 15px;
-            display: inline-block;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
         }
-        a:hover {
-            text-decoration: underline;
+
+        .admin-link a:hover {
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #ffd700;
+            margin-top: 0;
+        }
+
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin: 5px 0;
         }
 
         @media (max-width: 600px) {
-            form {
-                width: 95%;
+            .title {
+                font-size: 2rem;
+            }
+            
+            .quick-select-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .selection-container {
+                padding: 20px;
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Team Selection</h1>
-    
-    <form action="/team-selection" method="post">
-        <label for="team_id">Team ID (required):</label>
-        <input type="text" id="team_id" name="team_id" placeholder="Enter Team ID" required>
+    <div class="selection-container">
+        <h1 class="title">🎮 Top3Buzz</h1>
+        <p class="subtitle">Choose your team and get ready to buzz in!</p>
+        
+        <div class="instructions">
+            <h3>📋 How to Play:</h3>
+            <ul>
+                <li>👥 Enter your team name</li>
+                <li>🚀 Click "Join Game" to enter the buzzer room</li>
+                <li>⚡ When the buzzer is active, click "BUZZ!" to register</li>
+                <li>🏆 All teams are ranked in the order they buzz in</li>
+                <li>⏱️ Watch the timer and be ready!</li>
+            </ul>
+        </div>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="team_name">👥 Team Name:</label>
+                <input type="text" id="team_name" name="team_name" required 
+                       placeholder="Enter your team name">
+            </div>
+            
+            <button type="submit" class="submit-btn">🚀 Join Game</button>
+        </form>
+        
+    </div>
 
-        <label for="team_name">Team Name:</label>
-        <input type="text" id="team_name" name="team_name" placeholder="Enter Team Name" required>
+    <script>
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const teamName = document.getElementById('team_name').value.trim();
+            
+            if (!teamName) {
+                e.preventDefault();
+                alert('Please enter a team name');
+                return;
+            }
+            
+            if (teamName.length < 2) {
+                e.preventDefault();
+                alert('Team name must be at least 2 characters long');
+                return;
+            }
+        });
 
-        <label for="name_suggestions">Or select from suggested names:</label>
-        <select id="name_suggestions" onchange="document.getElementById('team_name').value = this.value">
-            <option value="">-- Select a name --</option>
-            {% for name in default_teams %}
-                <option value="{{ name }}">{{ name }}</option>
-            {% endfor %}
-        </select>
-
-        <button type="submit">Join Game</button>
-    </form>
-
+        // Auto-focus on team name input
+        document.getElementById('team_name').focus();
+    </script>
 </body>
-
 </html>

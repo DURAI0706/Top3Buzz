@@ -3,201 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Buzzer</title>
+    <title>🎮 Team Buzzer - {{ team_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: #000;
-            color: #ffcc00;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        .buzzer-container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .team-name {
+            font-size: 2.5rem;
+            color: #00ff88;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .buzzer-button {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: none;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            margin: 20px 0;
+        }
+
+        .buzzer-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+        }
+
+        .buzzer-button:active {
+            transform: scale(0.95);
+        }
+
+        .buzzer-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-message {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            min-height: 50px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-            overflow: hidden;
         }
-        h1 {
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            text-align: center;
-        }
-        #buzzer {
-            background-color: #ff0000;
-            color: white;
-            padding: 50px;
-            font-size: 24px;
-            border: none;
-            border-radius: 50%;
-            width: 200px;
-            height: 200px;
-            cursor: pointer;
-            margin: 20px auto;
-            display: block;
-            box-shadow: 0 0 30px #ffcc00;
-        }
-        #buzzer:hover {
-            background-color: #990000;
-        }
-        #buzzer:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        #status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-        }
+
         .success {
-            background-color: #dff0d8;
-            color: #3c763d;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
         }
+
         .error {
-            background-color: #f2dede;
-            color: #a94442;
+            color: #ff6b6b;
+            text-shadow: 0 0 10px #ff6b6b;
         }
-        #buzzed-list {
-            margin-top: 20px;
-            text-align: center;
+
+        .waiting {
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
         }
-        #buzzed-list h3 {
-            margin-bottom: 10px;
-        }
-        #buzzed-list ol {
-            padding-left: 0;
-            list-style: none;
-        }
-        #timer {
+
+        .timer-display {
             font-size: 3rem;
-            margin-bottom: 20px;
+            color: #00ff88;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-family: 'Courier New', monospace;
+        }
+
+        .position-display {
+            font-size: 4rem;
+            color: #ffd700;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-weight: bold;
+        }
+
+        .navigation {
+            margin-top: 30px;
+        }
+
+        .navigation a {
+            color: #00ff88;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin: 0 15px;
+            transition: color 0.3s ease;
+        }
+
+        .navigation a:hover {
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .celebration {
+            animation: celebration 0.5s ease-in-out;
+        }
+
+        @keyframes celebration {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(10deg); }
+            50% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.15) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        @media (max-width: 600px) {
+            .buzzer-button {
+                width: 200px;
+                height: 200px;
+                font-size: 1.5rem;
+            }
+            
+            .team-name {
+                font-size: 2rem;
+            }
+            
+            .timer-display {
+                font-size: 2rem;
+            }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Team Buzzer</h1>
-    <div id="timer">00:00</div>
-    <button id="buzzer" disabled>BUZZ</button>
-    <div id="status" style="display: none;"></div>
-    <div id="removal-message" class="removed-message" style="display: none;">
-        <h2>Team Removed</h2>
-        <p>Your team has been removed from the game by the administrator.</p>
-        <p><a href="/">Return to Home</a></p>
+    <div class="buzzer-container">
+        <h1 class="team-name">{{ team_name }}</h1>
+        
+        <div class="timer-display" id="timer-display">00:00</div>
+        
+        <button class="buzzer-button pulse" id="buzz-button">
+            BUZZ!
+        </button>
+        
+        <div class="status-message" id="status-message">
+            Ready to buzz in!
+        </div>
+        
+        <div class="position-display" id="position-display" style="display: none;">
+            
+        </div>
+        
+        <div class="navigation">
+            <a href="{{ url_for('team_selection') }}">🔄 Change Team</a>
+        </div>
     </div>
 
     <script>
-        const buzzerButton = document.getElementById('buzzer');
-        const timerDisplay = document.getElementById('timer');
-        const statusDiv = document.getElementById('status');
-        const removalMessageDiv = document.getElementById('removal-message');
-
-        let timerRunning = false;
-        let secondsRemaining = 0;
-
-        // Fetch timer status from server every second
-        const timerInterval = setInterval(fetchTimerStatus, 1000);
+        const buzzButton = document.getElementById('buzz-button');
+        const statusMessage = document.getElementById('status-message');
+        const positionDisplay = document.getElementById('position-display');
+        const timerDisplay = document.getElementById('timer-display');
         
-        // Check if team has been removed every 3 seconds
-        const teamStatusInterval = setInterval(checkTeamStatus, 3000);
+        let buzzedIn = false;
+        let buzzerActive = false;
 
-        buzzerButton.addEventListener('click', function() {
+        const updateTimerDisplay = (seconds) => {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        };
+
+        const updateStatus = () => {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    buzzerActive = data.buzzer_active;
+                    updateTimerDisplay(data.remaining_time);
+                    
+                    if (!buzzerActive) {
+                        buzzButton.disabled = true;
+                        buzzButton.classList.remove('pulse');
+                        statusMessage.textContent = 'Buzzer is not active';
+                        statusMessage.className = 'status-message error';
+                    } else if (!buzzedIn) {
+                        buzzButton.disabled = false;
+                        buzzButton.classList.add('pulse');
+                        statusMessage.textContent = 'Ready to buzz in!';
+                        statusMessage.className = 'status-message waiting';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    statusMessage.textContent = 'Connection error';
+                    statusMessage.className = 'status-message error';
+                });
+        };
+
+        const checkTeamStatus = () => {
+            fetch('/team-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.removed) {
+                        window.location.href = '/team';
+                    }
+                })
+                .catch(error => console.error('Error checking team status:', error));
+        };
+
+        const buzz = () => {
+            if (!buzzerActive || buzzedIn) return;
+            
             fetch('/buzz', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'}
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'Success') {
-                    statusDiv.textContent = `Buzzed in! You are position #${data.position}`;
-                    statusDiv.style.display = 'block';
-                    buzzerButton.disabled = true;
-                } else {
-                    statusDiv.textContent = data.message;
-                    statusDiv.style.display = 'block';
+                    buzzedIn = true;
+                    buzzButton.disabled = true;
+                    buzzButton.classList.remove('pulse');
+                    buzzButton.classList.add('celebration');
                     
-                    // Check if team was removed
-                    if (data.message === "Your team has been removed from the game") {
-                        showRemovalMessage();
+                    statusMessage.textContent = data.message;
+                    statusMessage.className = 'status-message success';
+                    
+                    positionDisplay.textContent = data.position_text;
+                    positionDisplay.style.display = 'block';
+                    
+                    // Add special styling for top 3 positions
+                    if (data.position === 1) {
+                        positionDisplay.style.color = '#ffd700'; // Gold
+                    } else if (data.position === 2) {
+                        positionDisplay.style.color = '#c0c0c0'; // Silver
+                    } else if (data.position === 3) {
+                        positionDisplay.style.color = '#cd7f32'; // Bronze
+                    } else {
+                        positionDisplay.style.color = '#00ff88'; // Green for others
+                    }
+                    
+                    setTimeout(() => {
+                        buzzButton.classList.remove('celebration');
+                    }, 500);
+                } else {
+                    statusMessage.textContent = data.message;
+                    statusMessage.className = 'status-message error';
+                    
+                    if (data.message.includes('already buzzed')) {
+                        buzzedIn = true;
+                        buzzButton.disabled = true;
+                        buzzButton.classList.remove('pulse');
                     }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                statusDiv.textContent = 'Error connecting to server';
-                statusDiv.style.display = 'block';
+                statusMessage.textContent = 'Connection error';
+                statusMessage.className = 'status-message error';
             });
+        };
+
+        // Event listeners
+        buzzButton.addEventListener('click', buzz);
+        
+        // Keyboard support - spacebar to buzz
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space' && !buzzedIn && buzzerActive) {
+                event.preventDefault();
+                buzz();
+            }
         });
 
-        function fetchTimerStatus() {
-            fetch('/timer-status')
-            .then(response => response.json())
-            .then(data => {
-                secondsRemaining = data.remaining_time;
-                timerRunning = data.timer_active;
-                
-                if (timerRunning) {
-                    buzzerButton.disabled = false;
-                    updateTimerDisplay();
-                } else {
-                    buzzerButton.disabled = true;
-                    timerDisplay.textContent = '00:00';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                buzzerButton.disabled = true;
-            });
-        }
-
-        function checkTeamStatus() {
-            fetch('/team-status')
-            .then(response => response.json())
-            .then(data => {
-                if (data.removed) {
-                    showRemovalMessage();
-                }
-            })
-            .catch(error => {
-                console.error('Error checking team status:', error);
-            });
-        }
-
-        function showRemovalMessage() {
-            // Show removal message
-            removalMessageDiv.style.display = 'block';
-            
-            // Hide buzzer and timer
-            buzzerButton.style.display = 'none';
-            timerDisplay.style.display = 'none';
-            statusDiv.style.display = 'none';
-            
-            // Clear intervals
-            clearInterval(timerInterval);
-            clearInterval(teamStatusInterval);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(secondsRemaining / 60);
-            const seconds = secondsRemaining % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-    </script>
-
-    <style>
-        .removed-message {
-            background-color: #ffeeee;
-            border: 2px solid #ff0000;
-            border-radius: 5px;
-            padding: 20px;
-            margin-top: 20px;
-            text-align: center;
-        }
+        // Update status every 2 seconds
+        setInterval(updateStatus, 2000);
+        setInterval(checkTeamStatus, 5000);
         
-        .removed-message h2 {
-            color: #ff0000;
-            margin-top: 0;
-        }
-    </style>
+        // Initial status check
+        updateStatus();
+    </script>
 </body>
 </html>

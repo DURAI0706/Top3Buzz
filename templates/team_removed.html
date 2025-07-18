@@ -1,40 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-    <div class="removed-container">
-        <h1>Team Removed</h1>
-        <p>Your team has been removed from the game by the administrator.</p>
-        <p>Please contact the game administrator if you believe this was done in error.</p>
-        
-        <div class="actions">
-            <a href="/" class="button">Return to Home</a>
-        </div>
-    </div>
-    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Team Removed - Top3Buzz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
         .removed-container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            max-width: 500px;
+            width: 100%;
             text-align: center;
-            padding: 50px 20px;
-            max-width: 600px;
-            margin: 0 auto;
         }
-        
-        h1 {
-            color: #ff0000;
+
+        .title {
+            font-size: 3rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
-        
-        .actions {
-            margin-top: 30px;
+
+        .message {
+            font-size: 1.5rem;
+            color: #ccc;
+            margin-bottom: 30px;
+            line-height: 1.6;
         }
-        
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
+
+        .explanation {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .explanation h3 {
+            color: #ffd700;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .explanation ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .explanation li {
+            margin: 8px 0;
+            color: #ddd;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
-            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #5a6268);
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .refresh-info {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+        }
+
+        .refresh-info p {
+            margin: 0;
+            color: #ffd700;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
+</head>
+<body>
+    <div class="removed-container">
+        <h1 class="title">🚫 Team Removed</h1>
+        
+        <div class="message">
+            Your team has been removed from the current game session by the admin.
+        </div>
+        
+        <div class="explanation">
+            <h3>📋 What happened?</h3>
+            <ul>
+                <li>🔧 The admin removed your team from the active game</li>
+                <li>🚫 You can no longer participate in the current buzzer session</li>
+                <li>🔄 You can rejoin with the same or different team details</li>
+                <li>⚙️ Contact the admin if you believe this was an error</li>
+            </ul>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{{ url_for('team_selection') }}" class="btn btn-primary">
+                🔄 Join New Team
+            </a>
+        </div>
+        
+        <div class="refresh-info">
+            <p>
+                💡 <strong>Tip:</strong> You can rejoin the game immediately with the same team ID and name, 
+                or choose different details for a fresh start.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh every 10 seconds to check if the team can rejoin
+        setTimeout(() => {
+            window.location.href = '/team-selection';
+        }, 10000);
+
+        // Add a countdown timer
+        let countdown = 10;
+        const updateCountdown = () => {
+            if (countdown > 0) {
+                document.title = `🎮 Team Removed - Redirecting in ${countdown}s`;
+                countdown--;
+                setTimeout(updateCountdown, 1000);
+            }
+        };
+        updateCountdown();
+    </script>
 </body>
 </html>

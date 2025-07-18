@@ -3,162 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buzzer Admin Panel</title>
+    <title>🎮 Buzzer Admin Panel - Top3Buzz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
+            color: #fff;
         }
-        h1, h2 {
-            color: #333;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 20px;
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #00ff88;
         }
-        button:hover {
-            background-color: #45a049;
-        }
-        button.danger {
-            background-color: #f44336;
-        }
-        button.danger:hover {
-            background-color: #d32f2f;
-        }
-        #status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .success {
-            background-color: #dff0d8;
-            color: #3c763d;
-        }
-        .error {
-            background-color: #f2dede;
-            color: #a94442;
-        }
-        #buzzer-status {
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .active {
-            background-color: #dff0d8;
-            color: #3c763d;
-        }
-        .inactive {
-            background-color: #f2dede;
-            color: #a94442;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+
         .control-panel {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
         }
+
         .panel-section {
-            flex: 1;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00ff88;
         }
+
+        .panel-section h2 {
+            color: #00ff88;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        #buzzer-status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .active {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
+        }
+
+        .inactive {
+            background: linear-gradient(45deg, #ff4757, #c44569);
+            color: #fff;
+        }
+
+        button {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        button.danger {
+            background: linear-gradient(45deg, #ff4757, #c44569);
+            color: #fff;
+        }
+
+        button.danger:hover {
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+
         .timer-controls {
             display: flex;
             gap: 10px;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
+
         #timer-display {
-            font-size: 24px;
+            font-size: 3rem;
             font-weight: bold;
-            margin: 10px 0;
+            text-align: center;
+            margin: 20px 0;
+            color: #00ff88;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-family: 'Courier New', monospace;
+        }
+
+        .teams-section {
+            margin-top: 30px;
+        }
+
+        .teams-section h2 {
+            color: #00ff88;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        th {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .position-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .position-badge.first {
+            background: linear-gradient(45deg, #ffd700, #ffb700);
+        }
+
+        .position-badge.second {
+            background: linear-gradient(45deg, #c0c0c0, #a0a0a0);
+        }
+
+        .position-badge.third {
+            background: linear-gradient(45deg, #cd7f32, #b36d1a);
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid #00ff88;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .timer-preset-container {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .return-home {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .return-home a {
+            color: #00ff88;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .return-home a:hover {
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        @media (max-width: 768px) {
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-controls {
+                justify-content: center;
+            }
+            
+            #timer-display {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Buzzer Admin Panel</h1>
-
-    <div class="control-panel">
-        <div class="panel-section">
-            <h2>Buzzer Control</h2>
-            <div id="buzzer-status" class="inactive">
-                Buzzer Status: <span id="status-text">Inactive</span>
+    <div class="container">
+        <h1>🎮 Buzzer Admin Panel</h1>
+        
+        <div class="control-panel">
+            <div class="panel-section">
+                <h2>🔴 Buzzer Control</h2>
+                <div id="buzzer-status" class="inactive">
+                    Buzzer Status: <span id="status-text">Inactive</span>
+                </div>
+                <button id="reset-buzzer" class="danger">🔄 Reset Buzzer</button>
+                <button id="toggle-buzzer">⚡ Toggle Buzzer</button>
             </div>
-            <button id="reset-buzzer">Reset Buzzer</button>
-            <button id="toggle-buzzer">Toggle Buzzer</button>
+
+            <div class="panel-section">
+                <h2>⏰ Timer</h2>
+                <div id="timer-display">00:00</div>
+                <div class="timer-controls">
+                    <button id="start-timer">▶️ Start</button>
+                    <button id="pause-timer">⏸️ Pause</button>
+                    <button id="reset-timer" class="danger">🔄 Reset</button>
+                </div>
+                <div class="timer-preset-container">
+                    <label for="timer-preset">⏱️ Preset:</label>
+                    <select id="timer-preset">
+                        <option value="30">30 seconds</option>
+                        <option value="60">1 minute</option>
+                        <option value="180">3 minutes</option>
+                        <option value="300">5 minutes</option>
+                        <option value="600">10 minutes</option>
+                    </select>
+                    <button id="set-timer">⚙️ Set Timer</button>
+                </div>
+            </div>
         </div>
 
-        <div class="panel-section">
-            <h2>Timer</h2>
-            <div id="timer-display">00:00</div>
-            <div class="timer-controls">
-                <button id="start-timer">Start</button>
-                <button id="pause-timer">Pause</button>
-                <button id="reset-timer">Reset</button>
-            </div>
-            <div>
-                <label for="timer-preset">Preset:</label>
-                <select id="timer-preset">
-                    <option value="30">30 seconds</option>
-                    <option value="60">1 minute</option>
-                    <option value="180">3 minutes</option>
-                    <option value="300">5 minutes</option>
-                </select>
-                <button id="set-timer">Set Timer</button>
-            </div>
+        <div class="teams-section">
+            <h2>🏆 Teams Ranking (All Buzzed Teams)</h2>
+            <table id="buzzed-teams-table">
+                <thead>
+                    <tr>
+                        <th>🏅 Position</th>
+                        <th>👥 Team Name</th>
+                        <th>⏰ Buzz Time</th>
+                    </tr>
+                </thead>
+                <tbody id="buzzed-teams">
+                    <!-- Teams will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="teams-section">
+            <h2>👥 All Registered Teams</h2>
+            <table id="all-teams-table">
+                <thead>
+                    <tr>
+                        <th>🆔 Team ID</th>
+                        <th>👥 Team Name</th>
+                        <th>📊 Status</th>
+                        <th>⚙️ Action</th>
+                    </tr>
+                </thead>
+                <tbody id="all-teams">
+                    <!-- Teams will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="return-home">
+            <a href="/">🏠 Return to Home</a>
         </div>
     </div>
-
-    <h2>Teams that have buzzed in</h2>
-    <table id="buzzed-teams-table">
-        <thead>
-            <tr>
-                <th>Position</th>
-                <th>Team Name</th>
-                <th>Buzz Time</th>
-            </tr>
-        </thead>
-        <tbody id="buzzed-teams">
-        </tbody>
-    </table>
-
-    <h2>All Teams</h2>
-    <table id="all-teams-table">
-        <thead>
-            <tr>
-                <th>Team ID</th>
-                <th>Team Name</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="all-teams">
-        </tbody>
-    </table>
-
-    <p><a href="/">Return to Home</a></p>
 
     <script>
         const toggleBuzzerBtn = document.getElementById('toggle-buzzer');
@@ -186,11 +319,11 @@
             if (active) {
                 buzzerStatusDiv.className = 'active';
                 statusTextSpan.textContent = 'Active';
-                toggleBuzzerBtn.textContent = 'Disable Buzzer';
+                toggleBuzzerBtn.textContent = '🔴 Disable Buzzer';
             } else {
                 buzzerStatusDiv.className = 'inactive';
                 statusTextSpan.textContent = 'Inactive';
-                toggleBuzzerBtn.textContent = 'Enable Buzzer';
+                toggleBuzzerBtn.textContent = '🟢 Enable Buzzer';
             }
         };
 
@@ -198,8 +331,8 @@
             const seconds = parseInt(timerPreset.value);
             fetch('/set-timer', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ seconds: seconds })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({seconds: seconds})
             })
             .then(response => response.json())
             .then(data => {
@@ -219,8 +352,8 @@
             timerInterval = setInterval(() => {
                 fetch('/update-timer', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'tick' })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({action: 'tick'})
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -228,7 +361,6 @@
                     timerRunning = data.timer_active;
                     updateTimerDisplay();
                     updateBuzzerStatus(data.buzzer_active);
-                    
                     if (!timerRunning) {
                         clearInterval(timerInterval);
                     }
@@ -240,8 +372,8 @@
         const startTimer = () => {
             fetch('/update-timer', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'start' })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action: 'start'})
             })
             .then(response => response.json())
             .then(data => {
@@ -257,8 +389,8 @@
         const pauseTimer = () => {
             fetch('/update-timer', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'pause' })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action: 'pause'})
             })
             .then(response => response.json())
             .then(data => {
@@ -273,8 +405,8 @@
         const resetTimer = () => {
             fetch('/update-timer', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'reset' })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action: 'reset'})
             })
             .then(response => response.json())
             .then(data => {
@@ -290,7 +422,7 @@
         const resetBuzzer = () => {
             fetch('/reset', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {'Content-Type': 'application/json'}
             })
             .then(response => response.json())
             .then(data => {
@@ -303,7 +435,7 @@
         const toggleBuzzer = () => {
             fetch('/toggle-buzzer', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {'Content-Type': 'application/json'}
             })
             .then(response => response.json())
             .then(data => {
@@ -316,43 +448,33 @@
             if (confirm('Are you sure you want to remove this team?')) {
                 fetch('/remove-team', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ team_id: teamId })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({team_id: teamId})
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'Success') {
-                        // Show notification
                         alert(data.message);
-                        
-                        // Force an immediate refresh of the teams lists
-                        fetchStatus();
-                        
-                        // Remove any immediate references to this team from the DOM
-                        // Remove from "All Teams" table
-                        const allTeamsRows = document.querySelectorAll('#all-teams tr');
-                        allTeamsRows.forEach(row => {
-                            if (row.cells[0].textContent === teamId) {
-                                row.remove();
-                            }
-                        });
-                        
-                        // If the team was buzzed in, check for it in the buzzed teams table as well
-                        const teamName = data.team_name || ''; // Get team name from response if available
-                        if (teamName) {
-                            const buzzedTeamsRows = document.querySelectorAll('#buzzed-teams tr');
-                            buzzedTeamsRows.forEach(row => {
-                                if (row.cells[1].textContent === teamName) {
-                                    row.remove();
-                                }
-                            });
-                        }
+                        fetchStatus(); // Refresh the display
                     } else {
                         alert('Error: ' + data.message);
                     }
                 })
                 .catch(error => console.error('Error:', error));
             }
+        };
+
+        const getPositionBadge = (position) => {
+            let badgeClass = '';
+            if (position === 1) badgeClass = 'first';
+            else if (position === 2) badgeClass = 'second';
+            else if (position === 3) badgeClass = 'third';
+            
+            const suffix = position === 1 ? 'st' : 
+                          position === 2 ? 'nd' : 
+                          position === 3 ? 'rd' : 'th';
+            
+            return `<span class="position-badge ${badgeClass}">${position}${suffix}</span>`;
         };
 
         const fetchStatus = async () => {
@@ -362,39 +484,65 @@
 
                 // Update buzzer status
                 updateBuzzerStatus(data.buzzer_active);
-                
+
                 // Update timer display
                 secondsRemaining = data.remaining_time;
                 timerRunning = data.timer_active;
                 updateTimerDisplay();
 
-                // Update buzzed teams table
+                // Update buzzed teams table - now shows ALL teams with their positions
                 const buzzedTeamsTable = document.getElementById('buzzed-teams');
                 buzzedTeamsTable.innerHTML = ''; // Clear previous data
-                data.buzzed_teams.forEach((team, index) => {
+
+                if (data.buzzed_teams.length === 0) {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${team}</td>
-                        <td>${new Date().toLocaleTimeString()}</td>
+                        <td colspan="3" style="text-align: center; font-style: italic; color: #ccc;">
+                            No teams have buzzed in yet
+                        </td>
                     `;
                     buzzedTeamsTable.appendChild(row);
-                });
+                } else {
+                    data.buzzed_teams.forEach((team, index) => {
+                        const row = document.createElement('tr');
+                        const position = index + 1;
+                        row.innerHTML = `
+                            <td>${getPositionBadge(position)}</td>
+                            <td>${team.name || team}</td>
+                            <td>${team.formatted_time || new Date().toLocaleTimeString()}</td>
+                        `;
+                        buzzedTeamsTable.appendChild(row);
+                    });
+                }
 
                 // Update all teams table
                 const allTeamsTable = document.getElementById('all-teams');
                 allTeamsTable.innerHTML = ''; // Clear previous data
-                
-                Object.entries(data.team_names).forEach(([teamId, teamName]) => {
+
+                if (Object.keys(data.team_names).length === 0) {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${teamId}</td>
-                        <td>${teamName}</td>
-                        <td>${data.buzzed_teams.includes(teamName) ? 'Buzzed' : 'Not Buzzed'}</td>
-                        <td><button onclick="removeTeam('${teamId}')">Remove Team</button></td>
+                        <td colspan="4" style="text-align: center; font-style: italic; color: #ccc;">
+                            No teams registered yet
+                        </td>
                     `;
                     allTeamsTable.appendChild(row);
-                });
+                } else {
+                    Object.entries(data.team_names).forEach(([teamId, teamName]) => {
+                        const row = document.createElement('tr');
+                        const teamBuzzed = data.buzzed_teams.some(team => 
+                            (team.name || team) === teamName
+                        );
+                        
+                        row.innerHTML = `
+                            <td>${teamId}</td>
+                            <td>${teamName}</td>
+                            <td>${teamBuzzed ? '🟢 Buzzed' : '⚪ Not Buzzed'}</td>
+                            <td><button onclick="removeTeam('${teamId}')" class="danger">❌ Remove</button></td>
+                        `;
+                        allTeamsTable.appendChild(row);
+                    });
+                }
             } catch (error) {
                 console.error('Error fetching status:', error);
             }

@@ -1,0 +1,219 @@
+/* Global Retro Gaming Styles for Top3Buzz */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* Retro neon text effects */
+.neon-text {
+    text-shadow: 
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        0 0 15px currentColor,
+        0 0 20px currentColor;
+}
+
+/* Retro button styles */
+.retro-button {
+    background: linear-gradient(45deg, #00ff88, #00cc6a);
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.retro-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+}
+
+.retro-button:active {
+    transform: translateY(0);
+}
+
+/* Retro card/panel styles */
+.retro-panel {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00ff88;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 136, 0.3),
+        inset 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+/* Retro input styles */
+.retro-input {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00ff88;
+    border-radius: 5px;
+    color: #fff;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+}
+
+.retro-input:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Retro table styles */
+.retro-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.retro-table th {
+    background: linear-gradient(45deg, #00ff88, #00cc6a);
+    color: #000;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.retro-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.retro-table tr:hover {
+    background: rgba(0, 255, 136, 0.1);
+}
+
+/* Retro animations */
+@keyframes retro-pulse {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+}
+
+.retro-pulse {
+    animation: retro-pulse 2s infinite;
+}
+
+@keyframes retro-glow {
+    0% { text-shadow: 0 0 5px currentColor; }
+    50% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+    100% { text-shadow: 0 0 5px currentColor; }
+}
+
+.retro-glow {
+    animation: retro-glow 2s infinite;
+}
+
+/* Retro color scheme */
+.retro-primary { color: #00ff88; }
+.retro-secondary { color: #ffd700; }
+.retro-danger { color: #ff6b6b; }
+.retro-warning { color: #ffa500; }
+.retro-info { color: #00bfff; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .retro-panel {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .retro-button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .retro-table {
+        font-size: 0.9rem;
+    }
+    
+    .retro-table th,
+    .retro-table td {
+        padding: 8px;
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #00ff88, #00cc6a);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #00cc6a, #00aa55);
+}
+
+/* Selection styling */
+::selection {
+    background: rgba(0, 255, 136, 0.3);
+    color: #fff;
+}
+
+/* Focus styles for accessibility */
+*:focus {
+    outline: 2px solid #ffd700;
+    outline-offset: 2px;
+}
+
+/* Loading animations */
+@keyframes retro-loading {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.retro-loading {
+    animation: retro-loading 1s linear infinite;
+}
+
+/* Status indicators */
+.status-online {
+    color: #00ff88;
+    text-shadow: 0 0 10px #00ff88;
+}
+
+.status-offline {
+    color: #ff6b6b;
+    text-shadow: 0 0 10px #ff6b6b;
+}
+
+.status-warning {
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+}
